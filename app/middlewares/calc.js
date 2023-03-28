@@ -37,7 +37,7 @@ const calc_dead = async () => {
         //     console.log(new Date(), new Date(machine.lastAlive));
         //     console.log(((new Date() - new Date(machine.lastAlive)) / 60000));
         // })
-        const toBeDead = machines.filter(machine => ((new Date() - new Date(machine.lastAlive)) / 60000) > 1);
+        const toBeDead = machines.filter(machine => ((new Date() - new Date(machine.lastAlive)) / 180000) > 1);
         toBeDead.map(async (deadly) => {
             console.log("toBeDead:", deadly.computer_name);
             Machine.updateOne({computer_name: deadly.computer_name}, {alive: false, deadAt: new Date()}).exec();

@@ -95,4 +95,4 @@ function initial() {
 
 
 setInterval(calc.calc_points, 10000);
-setInterval(calc.calc_dead, 10000)
+setInterval(calc.calc_dead, 35000)
