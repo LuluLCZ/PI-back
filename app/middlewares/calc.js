@@ -1,7 +1,9 @@
 const db = require("../models");
+const Machine = require("../models/machine.model");
 const Points = db.points;
 const GlobInfs = db.globinf;
 const Machines = db.machine;
+const Nums = db.nums;
 
 const aliveSinceMin = (since) => {
     const diff = Math.abs(Date.now() - since);
@@ -29,6 +31,23 @@ const modeMalware = (mode) => {
     }
 }
 
+const calc_dead = async () => {
+    Machine.find({alive: true}).exec((err, machines) => {
+        // machines.map((machine) => {
+        //     console.log(new Date(), new Date(machine.lastAlive));
+        //     console.log(((new Date() - new Date(machine.lastAlive)) / 60000));
+        // })
+        const toBeDead = machines.filter(machine => ((new Date() - new Date(machine.lastAlive)) / 60000) > 1);
+        toBeDead.map(async (deadly) => {
+            console.log("toBeDead:", deadly.computer_name);
+            Machine.updateOne({computer_name: deadly.computer_name}, {alive: false, deadAt: new Date()}).exec();
+            const num = await Nums.findOne({},{}, { sort: { "atTime": -1 } });
+            if (num && num.alive !== NaN) await new Nums({alive: num.alive - 1}).save();
+            else await new Nums({alive: 0}).save();
+        })
+        })
+}
+
 const calc_points = async () => {
 
     const machines = await Machines.find({});
@@ -38,7 +57,7 @@ const calc_points = async () => {
     // const points = await Points.findOne({}, {}, { sort: { "created_at": -1 } });
 
     let total = 0;
-    console.log(globinfs);
+    // console.log(globinfs);
     const Tmax = globinfs[0].total_time;
     machines?.forEach(async (machine) => {
         // if (machine.alive) {
@@ -55,7 +74,7 @@ const calc_points = async () => {
             Tm = Tm > Tmax ? Tmax : Tm;
     
             let score = ((alive * ((Tm * (i + m) * invest * rdp) + revsh  + cmds))/ ioc);
-            console.log(score);
+            console.log(score, alive, i, m, invest, rdp, revsh, cmds, ioc);
             score = score > Tmax ? Tmax : score;
             total += Number(score.toFixed(5));
             const point = await Points.findOne({machine: machine.computer_name}, {}, { sort: { "date": -1 } });
@@ -83,7 +102,7 @@ const calc_points = async () => {
         })
     } else {
         const newPointsTot = parseFloat(total);
-        console.log(newPointsTot, newTot.pointsTot + total, total, newTot.pointsTot);
+        // console.log(newPointsTot, newTot.pointsTot + total, total, newTot.pointsTot);
         new Points({pointsTot: newPointsTot, machine: "allTogether"}).save((err) => {
             if (err) {
                 console.log("error while adding points to allTogether, here is the problem:");
@@ -96,7 +115,7 @@ const calc_points = async () => {
 }
 
 
-module.exports = {calc_points}
+module.exports = {calc_points, calc_dead}
 
 
 

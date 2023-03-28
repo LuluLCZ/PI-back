@@ -29,5 +29,6 @@ module.exports = function(app) {
   app.get("/getMachine/:computer_name", controller.getMachine);
 
   app.get("/api/getPoints", controller.getPoints);
+  app.get("/api/getNums", controller.getNums);
 
 };

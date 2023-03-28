@@ -10,6 +10,7 @@ db.role = require("./role.model");
 db.globinf = require("./globinf.model");
 db.machine = require("./machine.model");
 db.points = require("./points.model");
+db.nums = require("./nb.model");
 
 db.ROLES = ["user", "admin", "moderator"];
 

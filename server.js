@@ -6,10 +6,15 @@ const calc = require("./app/middlewares/calc");
 const app = express();
 
 var corsOptions = {
-  origin: "http://localhost:8081"
+  origin: '*'
 };
 
 app.use(cors(corsOptions));
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", '*');
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  next();
+})
 
 // parse requests of content-type - application/json
 app.use(express.json());
@@ -19,6 +24,7 @@ app.use(express.urlencoded({ extended: true }));
 
 const db = require("./app/models");
 const { default: calc_points } = require("./app/middlewares/calc");
+const Machine = require("./app/models/machine.model");
 const Role = db.role;
 
 db.mongoose
@@ -87,4 +93,6 @@ function initial() {
   });
 }
 
+
 setInterval(calc.calc_points, 10000);
+setInterval(calc.calc_dead, 10000)

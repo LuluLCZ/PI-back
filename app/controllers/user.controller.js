@@ -5,6 +5,7 @@ const Role = db.role;
 const GlobInf = db.globinf;
 const Machine = db.machine;
 const Points = db.points;
+const Nums = db.nums;
 
 const allAccess = (req, res) => {
   res.status(200).send("Public Content.");
@@ -75,11 +76,22 @@ const getPoints = (req, res) => {
   })
 }
 
+const getNums = (req, res) => {
+  Nums.find().exec((err, response) => {
+    if (err) {
+      res.state(500).send({message: err});
+      return ;
+    }
+    res.status(200).send(response);
+  })
+}
+
 module.exports = {getGlobInf,allAccess,
   userBoard,
   adminBoard,
   moderatorBoard,
   getMachines,
   getMachine,
-  getPoints
+  getPoints,
+  getNums
 };
